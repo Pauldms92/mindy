@@ -24,7 +24,7 @@ export default function Quiz() {
         return;
       }
 
-      // 1) Récupération des questions du thème
+      // 1) Récupérer les questions liées au topic
       const { data: qs, error: qErr } = await supabase
         .from('questions')
         .select('id, stem')
@@ -38,7 +38,7 @@ export default function Quiz() {
         return;
       }
 
-      // 2) Pour chaque question, on charge ses réponses
+      // 2) Charger les réponses pour chaque question
       const withAnswers = await Promise.all(
         (qs || []).map(async (q) => {
           const { data: a, error: aErr } = await supabase
@@ -57,10 +57,12 @@ export default function Quiz() {
       }
     })();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [topicId]);
 
-  // Sélection d'une réponse
+  // Sélection réponse
   const onPick = (answer) => setSelectedAnswer(answer);
 
   // Passer à la question suivante
@@ -70,26 +72,26 @@ export default function Quiz() {
       setSelectedAnswer(null);
     } else {
       alert("Quiz terminé ✅");
-      router.push('/plan'); // 🔥 redirige vers plan.js (à créer)
+      router.push('/plan'); // Redirection vers ton plan.js
     }
   };
 
-  // UI states
+  // ÉTATS UI
   if (loading) {
     return (
-      <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator />
-        <Text style={{ marginTop:8 }}>Chargement…</Text>
+        <Text style={{ marginTop: 8 }}>Chargement…</Text>
       </View>
     );
   }
 
   if (errorMsg) {
     return (
-      <View style={{ flex:1, padding:24, justifyContent:'center', alignItems:'center' }}>
-        <Text style={{ color:'red', textAlign:'center' }}>{errorMsg}</Text>
-        <TouchableOpacity onPress={() => router.replace('/onboarding/topics')} style={{ marginTop:12 }}>
-          <Text style={{ color:'#7C4DFF' }}>Choisir un thème</Text>
+      <View style={{ flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: 'red', textAlign: 'center' }}>{errorMsg}</Text>
+        <TouchableOpacity onPress={() => router.replace('/onboarding/topics')} style={{ marginTop: 12 }}>
+          <Text style={{ color: '#7C4DFF' }}>Choisir un thème</Text>
         </TouchableOpacity>
       </View>
     );
@@ -97,57 +99,66 @@ export default function Quiz() {
 
   if (!questions.length) {
     return (
-      <View style={{ flex:1, padding:24, justifyContent:'center', alignItems:'center' }}>
+      <View style={{ flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Aucune question pour ce thème.</Text>
-        <TouchableOpacity onPress={() => router.replace('/onboarding/topics')} style={{ marginTop:12 }}>
-          <Text style={{ color:'#7C4DFF' }}>Changer de thème</Text>
+        <TouchableOpacity onPress={() => router.replace('/onboarding/topics')} style={{ marginTop: 12 }}>
+          <Text style={{ color: '#7C4DFF' }}>Changer de thème</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   const currentQ = questions[currentIndex];
+  const progress = (currentIndex + 1) / questions.length;
 
   return (
-    <View style={{ flex:1, padding:24 }}>
-      <Text style={{ fontSize:12, color:'#666', marginBottom:4 }}>
-        Question {currentIndex + 1} / {questions.length}
-      </Text>
-      <Text style={{ fontSize:20, fontWeight:'600', marginBottom:12 }}>
-        {currentQ.stem}
-      </Text>
+    <View style={{ flex: 1, padding: 24 }}>
+      {/* Header + Progress */}
+      <View style={{ marginBottom: 16 }}>
+        <Text style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
+          Question {currentIndex + 1} / {questions.length}
+        </Text>
+        <View style={{ height: 6, width: '100%', backgroundColor: '#E5E7EB', borderRadius: 4 }}>
+          <View style={{ height: 6, width: `${progress * 100}%`, backgroundColor: '#7C4DFF', borderRadius: 4 }} />
+        </View>
+      </View>
 
+      {/* Question */}
+      <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 12 }}>{currentQ.stem}</Text>
+
+      {/* Réponses */}
       {currentQ.answers.map((a) => (
         <TouchableOpacity
           key={a.id}
           onPress={() => onPick(a)}
           style={{
-            padding:14,
-            borderRadius:10,
-            borderWidth:1,
+            padding: 14,
+            borderRadius: 10,
+            borderWidth: 1,
             borderColor: selectedAnswer?.id === a.id ? '#7C4DFF' : '#E5E7EB',
             backgroundColor: selectedAnswer?.id === a.id ? '#EFE9FF' : '#FFFFFF',
-            marginBottom:10
+            marginBottom: 10,
           }}
         >
-          <Text style={{ fontSize:16 }}>{a.label}</Text>
+          <Text style={{ fontSize: 16 }}>{a.label}</Text>
         </TouchableOpacity>
       ))}
 
+      {/* Feedback */}
       {selectedAnswer && (
-        <View style={{ marginTop:16, padding:12, borderRadius:10, backgroundColor:'#F5F3FF' }}>
-          <Text style={{ fontWeight:'700', color: selectedAnswer.is_correct ? 'green' : 'red' }}>
+        <View style={{ marginTop: 16, padding: 12, borderRadius: 10, backgroundColor: '#F5F3FF' }}>
+          <Text style={{ fontWeight: '700', color: selectedAnswer.is_correct ? 'green' : 'red' }}>
             {selectedAnswer.is_correct ? '✅ Bonne réponse' : '❌ Mauvaise réponse'}
           </Text>
           {!!selectedAnswer.explanation && (
-            <Text style={{ marginTop:6, fontStyle:'italic' }}>{selectedAnswer.explanation}</Text>
+            <Text style={{ marginTop: 6, fontStyle: 'italic' }}>{selectedAnswer.explanation}</Text>
           )}
 
           <TouchableOpacity
             onPress={nextQuestion}
-            style={{ marginTop:16, backgroundColor:'#7C4DFF', padding:12, borderRadius:10 }}
+            style={{ marginTop: 16, backgroundColor: '#7C4DFF', padding: 12, borderRadius: 10 }}
           >
-            <Text style={{ color:'#fff', textAlign:'center', fontWeight:'600' }}>
+            <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '600' }}>
               {currentIndex < questions.length - 1 ? 'Question suivante' : 'Terminer'}
             </Text>
           </TouchableOpacity>
