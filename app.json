@@ -2,27 +2,6 @@
   "expo": {
     "name": "Mindy",
     "slug": "mindy",
-    "scheme": "com.mindy",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#6C4CF7"
-    },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.mindy.app"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#6C4CF7"
-      },
-      "package": "com.mindy.app"
-    },
     "extra": {
       "supabaseUrl": "https://gvqunhimugyjtzmrbisg.supabase.co",
       "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2cXVuaGltdWd5anR6bXJiaXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzOTExMDMsImV4cCI6MjA3NDk2NzEwM30.YmnwihqHu9q1_NA4JmnYwJ77BHs6EElwaDC7or7lcaI"
