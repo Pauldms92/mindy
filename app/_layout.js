@@ -4,9 +4,11 @@ import { useStore } from '../store/useStore';
 import { View, StatusBar } from 'react-native';
 
 export default function RootLayout() {
-  const initUser = useStore(s => s.initUser);
+  const initAuth = useStore(s => s.initAuth);
 
-  useEffect(() => { initUser(); }, []);
+  useEffect(() => { 
+    initAuth(); 
+  }, []);
 
   return (
     <View style={{ flex:1, backgroundColor:'#fff' }}>
